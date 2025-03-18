@@ -1,0 +1,17 @@
+version: "3"
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: Focalboard-manager
+    volumes:
+      - fbdata:/opt/focalboard/data
+    ports:
+      - "7000:7000"  # export
+    environment:
+      - VIRTUAL_HOST=focalboard.local
+      - VIRTUAL_PORT=7000
+
+volumes:
+  fbdata:
