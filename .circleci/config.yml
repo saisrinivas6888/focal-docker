@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Run Backend Tests (Go) 
           command: |
-            docker run --rm -v $(pwd):/app -w /app golang:1.21 go test ./server/...
+            docker run --rm -v $(pwd):/app -w /app/server golang:1.21 sh -c "go mod tidy && go test ./..."
       - run:
           name: Run Webapp Tests (React)
           command: |
