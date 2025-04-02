@@ -1,0 +1,72 @@
+version: 2.1
+
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/base:stable  # CircleCI base image
+
+jobs:
+  build:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t focalboard-app -f docker/Dockerfile .
+
+  test:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image for Testing  # Fix: Build again before running tests
+          command: |
+            docker build -t focalboard-app -f docker/Dockerfile .
+      - run:
+          name: Run Backend Tests (Go) in Go Container
+          command: |
+            docker run --rm -v $(pwd):/app -w /app golang:1.21 go test ./server/...
+      - run:
+          name: Run Webapp Tests (React)
+          command: |
+            docker run --rm focalboard-app npm --prefix webapp test
+      - run:
+          name: Docker Container Health Check
+          command: |
+            docker run -d --name test-container focalboard-app
+            sleep 5  # Wait for the container to start
+            docker ps | grep test-container
+            docker logs test-container
+            docker rm -f test-container   
+
+  deploy:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Login to Docker Hub
+          command: echo "$DOCKER_PASSWORD" | docker login -u sai102 --password-stdin
+      - run:
+          name: Push Docker Image
+          command: |
+            docker tag focalboard-app sai102/focalboard:latest
+            docker push sai102/focalboard:latest
+
+workflows:
+  version: 2
+  ci_pipeline:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
