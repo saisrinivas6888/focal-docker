@@ -26,7 +26,12 @@ jobs:
           command: |
             docker build -t focalboard-app -f docker/Dockerfile .
       - run:
-          name: Run Backend Tests (Go) in Go Container
+          name: Install Go Dependencies
+          command: |
+            cd server
+            go mod tidy
+      - run:
+          name: Run Backend Tests (Go) 
           command: |
             docker run --rm -v $(pwd):/app -w /app golang:1.21 go test ./server/...
       - run:
