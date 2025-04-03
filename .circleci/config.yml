@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t focalboard-server -f docker/Dockerfile .
+            docker build -t docker-app -f docker/Dockerfile .
 
   test:
     executor: docker-executor
@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Docker Container Health Check
           command: |
-            docker run -d --name test-container focalboard-server
+            docker run -d --name test-container docker-app
             sleep 5  # Wait for the container to start
             docker ps | grep test-container
             docker logs test-container
@@ -45,8 +45,8 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
-            docker tag focalboard-server sai102/focalboard:latest
-            docker push sai102/focalboard:latest
+            docker tag focalboard-server sai102/docker-app:latest
+            docker push sai102/docker-app:latest
 
 workflows:
   version: 2
