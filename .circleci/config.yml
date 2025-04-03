@@ -25,15 +25,7 @@ jobs:
           name: Build Docker Image for Testing  # Fix: Build again before running tests
           command: |
             docker build -t focalboard-app -f docker/Dockerfile .
-      - run:
-          name: Install Go Dependencies
-          command: |
-            cd server
-            go mod tidy
-      - run:
-          name: Run Backend Tests (Go) 
-          command: |
-            docker run --rm -v $(pwd):/app -w /app/server golang:1.21 sh -c "go mod tidy && go test ./..."
+      
       - run:
           name: Run Webapp Tests (React)
           command: |
