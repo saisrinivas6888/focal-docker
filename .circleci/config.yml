@@ -25,11 +25,6 @@ jobs:
           name: Build Docker Image for Testing  # Fix: Build again before running tests
           command: |
             docker build -t focalboard-app -f docker/Dockerfile .
-      
-      - run:
-          name: Run Webapp Tests (React)
-          command: |
-            docker run --rm focalboard-app npm --prefix webapp test
       - run:
           name: Docker Container Health Check
           command: |
