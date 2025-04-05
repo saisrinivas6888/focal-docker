@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Build Docker Image for Testing  # Fix: Build again before running tests
           command: |
-            docker build -t focalboard-server -f docker/Dockerfile .
+            docker build -t docker-app -f docker/Dockerfile .
       - run:
           name: Docker Container Health Check
           command: |
