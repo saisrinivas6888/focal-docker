@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
-            docker tag focalboard-server sai102/docker-app:latest
+            docker tag docker-app sai102/docker-app:latest
             docker push sai102/docker-app:latest
 
 workflows:
