@@ -3,7 +3,7 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: cimg/base:stable  # CircleCI base image
+      - image: cimg/base:stable
 
 jobs:
   build:
@@ -15,43 +15,49 @@ jobs:
           name: Build Docker Image
           command: |
             docker build -t docker-app -f docker/Dockerfile .
+            docker save docker-app > docker-app.tar
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker-app.tar
 
   test:
     executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker
+      - attach_workspace:
+          at: .
       - run:
-          name: Build Docker Image for Testing  # Fix: Build again before running tests
-          command: |
-            docker build -t docker-app -f docker/Dockerfile .
+          name: Load Docker Image
+          command: docker load < docker-app.tar
       - run:
           name: Docker Container Health Check
           command: |
             docker run -d --name test-container docker-app
-            sleep 5  # Wait for the container to start
+            sleep 5
             docker ps | grep test-container
             docker logs test-container
-            docker rm -f test-container   
+            docker rm -f test-container
 
-    deploy:
+  deploy:
     executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load Docker Image
+          command: docker load < docker-app.tar
       - run:
           name: Login to Docker Hub
           command: echo "$DOCKER_PASSWORD" | docker login -u sai102 --password-stdin
-      - run:
-          name: Rebuild Docker Image for Deployment  # <== ADD THIS
-          command: |
-            docker build -t docker-app -f docker/Dockerfile .
       - run:
           name: Push Docker Image
           command: |
             docker tag docker-app sai102/docker-app:latest
             docker push sai102/docker-app:latest
-
 
 workflows:
   version: 2
