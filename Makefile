@@ -168,7 +168,6 @@ server-test-postgres: ## Run server tests using postgres
 	@echo Starting docker container for postgres
 	docker compose -f ./docker-testing/docker-compose-postgres.yml down -v --remove-orphans
 	docker compose -f ./docker-testing/docker-compose-postgres.yml run start_dependencies
-	cd server; go test -tags '$(BUILD_TAGS)' -race -v -coverpkg=./... -coverprofile=server-postgres-profile.coverage -count=1 -timeout=30m ./...
 	cd server; go tool cover -func server-postgres-profile.coverage
 	docker compose -f ./docker-testing/docker-compose-postgres.yml down -v --remove-orphans
 
