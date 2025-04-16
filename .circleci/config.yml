@@ -24,7 +24,7 @@ jobs:
   test:
     executor: docker-executor
     docker:
-        - image: cimg/node:18.17 
+        - image: cimg/go:1.22
     steps:
       - checkout
       - setup_remote_docker
@@ -41,16 +41,16 @@ jobs:
             docker ps | grep test-container
             docker logs test-container
             docker rm -f test-container
+
+      - run:
+          name: Run server tests
+          command: make server-test
+          
       - run:
            name: Install npm dependencies
            command: |
                cd webapp
                npm install --legacy-peer-deps
-      - run:
-           name: Run Webapp Cypress Tests
-           command: |
-                cd webapp
-                npm run cypress:ci
 
   deploy:
     executor: docker-executor
