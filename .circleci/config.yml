@@ -24,7 +24,6 @@ jobs:
   test:
     executor: docker-executor
     docker:
-        - image: cimg/go:1.22
         - image: cimg/node:18.17 
     steps:
       - checkout
@@ -42,6 +41,10 @@ jobs:
             docker ps | grep test-container
             docker logs test-container
             docker rm -f test-container
+      - run:
+           name: Install npm dependencies
+           command: |
+               npm install
       - run:
            name: Run Webapp Cypress Tests
            command: |
