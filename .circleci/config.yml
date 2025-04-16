@@ -23,7 +23,6 @@ jobs:
 
   test:
     executor: docker-executor
-    d
     steps:
       - checkout
       - setup_remote_docker
