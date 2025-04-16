@@ -25,6 +25,7 @@ jobs:
     executor: docker-executor
     docker:
         - image: cimg/go:1.22
+        - image: cimg/node:18.17 
     steps:
       - checkout
       - setup_remote_docker
