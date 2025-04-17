@@ -40,12 +40,6 @@ jobs:
             docker logs test-container
             docker rm -f test-container
           
-      - run:
-           name: Install npm dependencies
-           command: |
-               cd webapp
-               npm install --legacy-peer-deps
-
   deploy:
     executor: docker-executor
     steps:
